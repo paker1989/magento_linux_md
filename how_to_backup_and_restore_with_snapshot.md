@@ -14,5 +14,3 @@ then
 - go to 'instances' / start  --> (if error, copy path, go to 'vlolumes', detach volume, then attach volume, paste the path, save, then go to 'instances', start)
 
 https://www.youtube.com/watch?v=1ZqZsBv1oaw&list=WL&index=2&t=332s
-
-09 74 75 19 12
