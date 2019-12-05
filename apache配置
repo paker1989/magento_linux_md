@@ -1,0 +1,116 @@
+linux的host文件在 /etc/host里
+
+linux下apache服务路径:
+	服务类型：由systemd启动的守护进程
+	配置单元： /usr/lib/systemd/system/httpd.service
+	守护进程： /usr/sbin/httpd
+	端口： 80(http), 443(https)
+	配置： /etc/httpd/
+	Web文档： /var/www/html/
+	log: /var/log/httpd/
+	服务启动的记录日志: /var/log/messages 
+
+
+
+vituralHost示例:
+
+<VirtualHost *:80>
+    DocumentRoot "E:\Code\Ivalley"
+    ServerName www.myivalley.com
+    DirectoryIndex index.php
+</VirtualHost>
+<Directory "E:\Code\Ivalley">
+	Allow from all
+	AllowOverride all
+</Directory>
+
+
+在您Apache服务器的配置中创建一个虚拟主 机并不会自动在您的DNS中对主机名做相应更新。您必须自 己在DNS中添加域名来指向您的IP地址。否则别人是无法看到您的web 站点的。您可以在您的hosts文件中添加这一条目来进 行测试，但这种方法仅适用于那些有这些条目的机器来使用。
+(https://docs.huihoo.com/apache/httpd/2.0-cn/vhosts/examples.html)
+
+==========================================================
+Ubuntu Linux Apache 虚拟主机 VirtualHost 配置 (https://www.cnblogs.com/qq78292959/archive/2012/07/16/2593153.html)
+
+Ubuntu 在 Linux 各发行版中, 个人用户数量最多的. 很多人在本机和虚拟机中使用. 但 Ubuntu 和 Redhat 的 VirtualHost 设置方法不相同.
+
+1. 打开目录 /etc/apache2/sites-available/, 发现 default 和 default-ssl 两个文件, 其中 default 是 http 虚拟主机服务的配置文件, default-ssl 是配置 https 服务使用的. 可以复制一份 default 文件. 并修改配置文件名, 文件名必须与域名一致 (如: demo.aliluna.com)
+
+2. 打开新建的配置文件, 修改 DocumentRoot, ServerName 和对应的配置目录. 例子如下:
+
+#
+# DocumentRoot 是网站文件存放的根目录
+# ServerName 是网站域名, 需要跟 DNS 指向的域名一致
+#
+<VirtualHost *:80>
+    ServerAdmin zhao.wuz@alibaba-inc.com
+    DocumentRoot /var/www/httpdocs/demo_aliluna_com
+    ServerName demo.aliluna.com
+    ErrorLog ${APACHE_LOG_DIR}/demo.aliluna.com-error.log
+    CustomLog ${APACHE_LOG_DIR}/demo.aliluna.com-access.log combined
+</VirtualHost>
+3. 通过 a2ensite 激活虚拟主机配置
+
+sudo a2ensite demo.aliluna.com
+4. 打开目录 /etc/apache2/sites-enabled/, 你会发现所有激活的虚拟主机, 可以通过 a2dissite 进行注销
+
+sudo a2dissite demo.aliluna.com
+5. 重启 Apache 服务, 激活虚拟主机
+
+sudo /etc/init.d/apache2 restart
+
+==========================================
+Apache配置虚拟主机 (比较详细的过程)
+https://blog.51cto.com/13525470/2070375
+
+Apache基于IP的虚拟主机配置: 
+- ifconfig创建虚拟ip，
+- 修改/usr/local/apache2/conf/httpd.conf 加入配置:
+- mkdir /usr/local/apache2/conf/vhost, vim *.conf:
+	  <VirtualHost 192.168.1.11:80>
+	      ServerName test11.com
+	    DocumentRoot /www/11
+	      <Directory "/www/11/">
+	        Options Indexes FollowSymLinks
+	        AllowOverride None
+	        Require all granted
+	      </Directory>
+	  </VirtualHost>
+- 修改主机hosts文件用于测试 /etc/hosts,
+
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+a2dissite
+a2ensite
+
+/etc/apache2/sites-available目录下存放可用的VirtualHost配置文件 。
+/etc/apache2/sites-enable 目录下存放已经生效的VirtualHost配置文件的符号链接(Symbolic Link)，该链接指向sites-available下的同名文件。
+
+使用命令a2ensite可以将sites-available目录下的配置文件生效，并且生效后会自动在sites-enable目录下创建同名链接。
+使用命令a2dissite可以将sites-enable目录下的配置文件链接失效并自动删除该链接。
+通过a2dissite和a2ensite，我们可以快速激活/屏蔽站点，加快开发和部署效率。
+
+==============================================================
+
+Annexe:
+Apache中DocumentRoot和Directory的区别  https://blog.csdn.net/DXCyber409/article/details/80942389
+
+
+在一台Web服务器上，通过多个独立的IP地址、域名或端口号提供不同的Web站点。
+	- 基于IP地址的虚拟主机：
+		  每个网站拥有不同的 IP 地址
+		  通过访问服务器上不同的IP地址访问不同的网站
+	- 基于域名的虚拟主机：
+		  所有的虚拟主机可以共享同一个IP地址
+		  使用不同的域名来访问不同的网站
+	- 基于端口的虚拟主机：
+		  所有的虚拟主机可以共享同一个IP地址
+	      各虚拟主机之间通过不同的端口号进行区分
+
+
+
+
+===============================================================
+linux命令:
+tail -f 循环读取文件内容
+cp -i bash_profile /var/www/ copy文件到/var/www

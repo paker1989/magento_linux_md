@@ -1,0 +1,106 @@
+youtube link： https://www.youtube.com/watch?v=aJDSigVa7To
+
+创建安全组: mysql http https tcp --> anywhere
+
+连接: 首先要修改密钥的权限: sudo chmod 400 *
+然后连接:
+ssh -i "miloeone_test2.pem" ubuntu@ec2-34-219-31-138.us-west-2.compute.amazonaws.com
+
+连接上以后: 
+- 
+sudo su // switch to root user
+- 
+apt-get install lamp-server^
+-
+sudo a2enmod rewrite
+-
+systemctl restart apache2
+-
+cd /etc/apache2
+-
+vi apache2.conf
+修改 /var/www下面的 overwrite --> none -> all
+
+然后:
+systemctl restart apache2
+然后
+cd /var/www/html
+
+然后拷贝项目 （可能需要给permission: sudo chmod 777 /var/www/html/）
+scp -i /Users/binxu/.ssh/miloe_test2/miloeone_test2.pem /Users/binxu/Desktop/miloe_one/miloe_sourcecode/miloe2019_.tar.gz ubuntu@ec2-34-219-31-138.us-west-2.compute.amazonaws.com:/var/www/html
+
+然后解压：
+mkdir miloe1
+tar -zxvf miloe2019_.tar.gz -C miloe1
+
+然后修改权限： 
+chmod -R 777 miloe/var
+chmod -R 777 miloe/pub
+chmod -R 777 miloe/app/etc
+chmod -R 775 miloe/generated
+
+插入管理用户:
+create user 'c9fgvfg33'@'localhost' IDENTIFIED BY 'kv6fz@.2a3';
+mysql> GRANT ALL PRIVILEGES ON *.* TO 'c9fgvfg33'@'localhost' WITH GRANT OPTION;
+
+cd /etc/apache2/sites-available,
+vi 000-default.conf （https://www.cnblogs.com/qq78292959/archive/2012/07/16/2593153.html）
+modifier:
+        DocumentRoot /var/www/html/miloe1/miloe
+        ServerName 34.219.31.138
+
+sudo systemctl restart apache2 
+
+======== (reminder)
+sudo chkconfig httpd on  （使用 chkconfig 命令配置 Apache Web 服务器，使其在每次系统启动时启动）
+
+您可以通过运行以下命令验证 httpd 是否已启用：
+chkconfig --list httpd
+
+stop mysql:
+service mysql stop
+
+修改mysql root user 密码:
+- mysql -u root -p
+- use mysql
+- select host,user,plugin,authentication_string from user;
+- update user set plugin="mysql_native_password",authentication_string="paker1989" where user="root";
+- update mysql.user set authentication_string=PASSWORD('paker1989'), plugin='mysql_native_password' where user='root';
+- flush privileges;
+- 重启mysql
+
+
+删除mysql:
+a.~$ sudo apt-get autoremove --purge mysql-server-5.0
+b.~$ sudo apt-get remove mysql-server
+c.~$ sudo apt-get autoremove mysql-server
+d.~$ sudo apt-get remove mysql-common (非常重要)
+
+dpkg -l |grep ^rc|awk '{print $2}' |sudo xargs dpkg -P
+
+重装mysql
+a.~$ sudo apt-get install mysql-server
+b.~$ sudo apt-get install mysql-client
+
+查看mysql运行状况
+sudo netstat -tap | grep mysql
+
+回到根目录
+cd /
+
+连接到ubuntu的默认目录
+cd /home/ubuntu
+
+======= 测试： 同样的magento2示例项目.
+
+git clone https://github.com/magento/magento2.git (under /var/www/html/)
+cd magento2
+composer install （如果有错误就一一安装）
+chmod -R * * --> 修改access
+mysql -u root -p
+create database magento;
+quit
+
+浏览器: dns | ip /magento2/setup
+
+

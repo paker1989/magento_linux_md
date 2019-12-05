@@ -1,0 +1,40 @@
+php -v
+
+cd /users/binxu
+
+curl -sS https://getcomposer.org/installer | php （下载composer.phar）
+
+然后: sudo mv /users/binxu/composer.phar /usr/local/bin/
+
+给权限: sudo chmod 755 /usr/local/bin/composer.phar
+
+加alias：
+vi ~/.bash_profile
+alias composer="php /usr/local/bin/composer.phar"
+执行: source ~/.bash_profile
+
+测试： composer --version
+
+(所有global项目在: /usr/local/bin/)
+
+
+
+============
+修改apache2默认端口： cd /usr/local/etc/httpd, 然后vi httpd.conf, 搜80 --> 8080 to 80, :wq
+
+macos: 本地测试httpd服务是否开启： curl http://127.0.0.1 --> expect: it works
+
+重启apache服务: sudo apachectl -k restart | stop | start
+
+
+===========
+mysql:
+正常安装
+cd ~
+vi .bash_profile, 加: export PATH=$PATH:/usr/local/mysql/bin
+source .bash_profile
+
+启动,停止mysql:
+sudo launchctl load -F /Library/LaunchDaemons/com.oracle.oss.mysql.mysqld.plist
+sudo launchctl unload -F /Library/LaunchDaemons/com.oracle.oss.mysql.mysqld.plist
+
